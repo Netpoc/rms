@@ -8,7 +8,7 @@ app.use(cors());
 const port = process.env.PORT || 3000;
 
 // Use environment variables
-const apiEndpoint = process.env.URL;
+const apiEndpoint = process.env.URL_FLESPI;
 const authorizationKey = process.env.AUTH
 
 app.get('/api/data', async (req, res) => {
