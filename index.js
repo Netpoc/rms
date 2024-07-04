@@ -1,9 +1,26 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
 require('dotenv').config();
+const connectDB = require('./config/db');
+const express = require('express');
+const session = require('express-session');
+const axios = require('axios');
+const helmet = require('helmet');
+const cors = require('cors');
 
 const app = express();
+
+connectDB();
+
+app.use(helmet());
+app.use(session({
+    // Set custom name for the session cookie
+    name: 'siteSessionId',
+    // a secure key for session encrption
+    secret: process.env.SESSION,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+    // Additional session configuration
+}));
 app.use(cors());
 const port = process.env.PORT || 3000;
 
