@@ -5,12 +5,20 @@ const session = require('express-session');
 const axios = require('axios');
 const helmet = require('helmet');
 const cors = require('cors');
-
+const userRouter = require('./services/userManagement')
+const bodyParser = require('body-parser')
+const faker = require('faker')
 const app = express();
+
+const deviceRoute = require('./routes/deviceRoutes');
 
 connectDB();
 
 app.use(helmet());
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
 app.use(session({
     // Set custom name for the session cookie
     name: 'siteSessionId',
@@ -42,6 +50,13 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
+app.use('/api', userRouter)
+app.use('/api', deviceRoute)
+
+app.get('/', (req, res) => {
+    res.send('RMS Backend is Live!');
+})
+
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on ${port}`);
 });
