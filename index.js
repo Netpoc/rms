@@ -5,8 +5,7 @@ const session = require('express-session');
 const axios = require('axios');
 const helmet = require('helmet');
 const cors = require('cors');
-const bodyParser = require('body-parser')
-const User = require('./models/userModel')
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -38,7 +37,6 @@ const port = process.env.PORT || 3000;
 // Use environment variables
 const apiEndpoint = process.env.URL_FLESPI;
 const authorizationKey = process.env.AUTH;
-const durationApi = 'https://flespi.io/gw/calcs/1704940/devices/5848395/intervals/10';
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -55,43 +53,10 @@ app.get('/api/data', async (req, res) => {
             }
         });
         res.json(response.data);
-    } catch (error) {
-        console.error('Error fetching data from API:', error);
+    } catch (error) {        
         res.status(500).send('Error fetching data from API');
     }
 });
-
-app.post('/create-super-admin', async (req, res) => {
-    const { username, password, name, surname, phone } = req.body;
-
-    try {
-        const superAdminExists = await User.findOne({ role: 'Super_Admin' });
-        if (superAdminExists) {
-            return res.status(400).json({ message: 'Super_Admin already exists' });
-        }
-
-        const user = new User({ username, password, role: 'Super_Admin', name, surname, phone });
-        await user.save();
-        res.status(201).json(user);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-app.get('/api/duration', async (req, res)=> {
-    try {
-        const duration = await axios.get(durationApi, {
-            header: {
-                'Authorization': authorizationKey
-            }
-        });
-        res.json(duration.data);
-    } catch (error) {
-        console.error('Error fetching data from API:', error);
-        res.status(500).send('Error fetching data from API');
-    }
-})
-
 
 app.get('/', (req, res) => {
     res.send('RMS Backend is Live!');
