@@ -6,6 +6,7 @@ const axios = require('axios');
 const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser')
+const User = require('./models/userModel')
 
 const app = express();
 
@@ -57,6 +58,23 @@ app.get('/api/data', async (req, res) => {
     } catch (error) {
         console.error('Error fetching data from API:', error);
         res.status(500).send('Error fetching data from API');
+    }
+});
+
+app.post('/create-super-admin', async (req, res) => {
+    const { username, password, name, surname, phone } = req.body;
+
+    try {
+        const superAdminExists = await User.findOne({ role: 'Super_Admin' });
+        if (superAdminExists) {
+            return res.status(400).json({ message: 'Super_Admin already exists' });
+        }
+
+        const user = new User({ username, password, role: 'Super_Admin', name, surname, phone });
+        await user.save();
+        res.status(201).json(user);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

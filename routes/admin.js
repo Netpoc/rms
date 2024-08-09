@@ -4,14 +4,14 @@ const User = require('../models/userModel');
 const { protect, authorize } = require('../middleware/auth');
 
 router.post('/create', protect, authorize('Admin'), async (req, res) => {
-    const { username, password, role, company } = req.body;
+    const { username, password, role, company, name, surname, phone } = req.body;
 
     if (role === 'Super_Admin' || role === 'Client_Admin') {
         return res.status(403).json({ message: 'Admin cannot create Super_Admin or Client_Admin' });
     }
 
     try {
-        const user = new User({ username, password, role, company });
+        const user = new User({ username, password, role, company, name, surname, phone });
         await user.save();
         res.status(201).json(user);
     } catch (err) {
